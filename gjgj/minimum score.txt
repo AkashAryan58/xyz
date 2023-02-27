@@ -1,0 +1,124 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+    int N, K;
+    cin >> N >> K;
+
+    vector<int> ans(N);
+    for (int i = 0; i < N; i++) {
+        cin >> ans[i];
+    }
+
+    int val = *max_element(ans.begin(), ans.end()) - *min_element(ans.begin(), ans.end());
+
+    if (K == 1) {
+        cout << val << endl;
+        cout << "1 " << N << endl;
+        return 0;
+    }
+
+    vector<int> minimum(N), highest(N);
+    minimum[0] = highest[0] = ans[0];
+    for (int i = 1; i < N; i++) {
+        minimum[i] = min(minimum[i - 1], ans[i]);
+        highest[i] = max(highest[i - 1], ans[i]);
+    }
+
+    vector<vector<int>> dp(K + 1, vector<int>(N + 1, 1e9));
+    vector<vector<int>> opt(K + 1, vector<int>(N + 1, 0));
+    dp[0][0] = 0;
+
+
+    for (int i = 1; i <= K; i++) {
+        for (int j = i; j <= N; j++) {
+            for (int l = i - 1; l < j; l++) {
+                int ins_val = highest[j - 1] - minimum[l];
+                if (l > 0) ins_val = max(ins_val, dp[i - 1][l]);
+                if (dp[i][j] > dp[i - 1][l] + ins_val) {
+                    dp[i][j] = dp[i - 1][l] + ins_val;
+                    opt[i][j] = l;
+                }
+            }
+        }
+    }
+
+    cout << dp[K][N] << endl;
+    int i = K, j = N;
+    vector<pair<int, int>> ranges(K);
+    while (i > 0) {
+        int l = opt[i][j];
+        ranges[i - 1] = make_pair(l + 1, j);
+        j = l;
+        i--;
+    }
+    for (int i = 0; i<=K-1; i++) {
+        cout << ranges[i].first << " " << ranges[i].second << endl;
+    }
+
+    return 0;
+}
+
+
+arn:aws:iam::122138858380:role/EC2InstanceProfileRole
+
+
+{
+  "Id": "Policy1677316635666",
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Stmt1677315467006",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject"
+      ],
+      "Effect": "Allow",
+      "Resource": "*",
+      "Principal": {
+        "AWS": [
+          "arn:aws:iam::122138858380:role/EC2InstanceProfileRole"
+        ]
+      }
+    },
+    {
+      "Sid": "Stmt1677316633866",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject"
+      ],
+      "Effect": "Allow",
+      "Resource": "arn:aws:s3:::reportbucket6776/*",
+      "Principal": "*"
+    }
+  ]
+}
+
+
+{
+    "Version": "2012-10-17",
+    "Id": "Policy1677315468254",
+    "Statement": [
+        {
+            "Sid": "Stmt1677315467006",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::122138858380:role/EC2InstanceProfileRole"
+            },
+            "Action": [
+                "s3:GetObject",
+                "s3:PutObject"
+            ],
+            "Resource": "arn:aws:s3:::reportbucket6776/*"
+        }
+    ]
+}
+
+
+
+https://783352820518.signin.aws.amazon.com/console
+"0x1da80aef36e6e4825c45e85a82a82d497b688b69"
+"0x5738c222d523883506f4909d689142d0a8a947b4"
